@@ -1,0 +1,6 @@
+<script>require("web/static/js/traindepartures").App.run()</script>
+<div class="jumbotron">
+  <span class="logo"></span>
+  <span id="lastupdated"></span>
+    <%= render "traintable.html", assigns %>
+</div>

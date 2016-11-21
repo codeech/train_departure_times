@@ -1,0 +1,29 @@
+<%= if @stations == [] do %>
+  <span>No train info at this time</span>
+<%= else %>
+  <%= for station <- @stations do %>
+  <h2><%= station %></h2>
+  <div class="departuretablecontainer">
+    <table class="departuretable">
+      <tr>
+	<th>TIME</th>
+	<th>DESTINATION</th>
+	<th>TRAIN#</th>
+	<th>TRACK#</th>
+	<th>STATUS</th>
+	<th>LATENESS</th>
+      </tr>
+      <%= for train <- @departureinfo[station] do %>
+      <tr>
+	<td><%= train.scheduledtime %></td>
+	<td><%= train.destination %></td>
+	<td><%= train.trip %></td>
+	<td><%= train.track %></td>
+	<td><%= train.status %></td>
+	<td><%= train.lateness %></td>
+      </tr>
+      <%= end %>
+    </table>
+  </div>
+  <%= end %>
+<%= end %>
