@@ -5,7 +5,7 @@ export var App = {
 	    url: '/departureinfoupdate',
 	    dataType: "html",
 	    success: function(data) {
-		$("#departuretablecontainer").html(data);
+		$("#tablecontainer").html(data);
 		App.restartlastupdatedcount();
 		return true;
 	    },

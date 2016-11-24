@@ -2,5 +2,7 @@
 <div class="jumbotron">
   <span class="logo"></span>
   <span id="lastupdated"></span>
+  <div id="tablecontainer">
     <%= render "traintable.html", assigns %>
+  </div>
 </div>
