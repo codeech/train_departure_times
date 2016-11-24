@@ -1,4 +1,4 @@
-<script>require("web/static/js/traindepartures").App.run()</script>
+<script>require("web/static/js/traindepartures").DepartureTable.documentready()</script>
 <div class="jumbotron">
   <span class="logo"></span>
   <span id="lastupdated"></span>

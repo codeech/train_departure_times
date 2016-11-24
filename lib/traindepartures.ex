@@ -11,6 +11,7 @@ defmodule Traindepartures do
       # Start the endpoint when the application starts
       supervisor(Traindepartures.Endpoint, []),
       # Start your own worker by calling: Traindepartures.Worker.start_link(arg1, arg2, arg3)
+      worker(Traindepartures.BroadCastTrainSchedule, []),
       # worker(Traindepartures.Worker, [arg1, arg2, arg3]),
     ]
 
