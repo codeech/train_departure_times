@@ -7,6 +7,40 @@ defmodule Traindepartures.Utils do
   @us_east_coast_timezone "America/New_York"
   def us_east_coast_timezone, do: @us_east_coast_timezone
 
+  @csv_url "http://developer.mbta.com/lib/gtrtfs/Departures.csv"
+  def csv_url, do: @csv_url
+
+  @train_table_template "traintable.html"
+  def train_table_template, do: @train_table_template
+
+  def getdeparturetabletemplateargs() do
+      departureinfo = getdepartureinfo()
+      stations = departureinfo |> Map.keys() |> Enum.sort()
+      %{departureinfo: departureinfo, stations: stations}
+  end
+
+  def getdepartureinfo() do
+      response = HTTPotion.get @csv_url
+
+      [headers | trains] = CSVLixir.parse(response.body)
+      # ScheduledTime is given as seconds since epoch (1970.01.01). Make it pretty
+      format_functions = %{
+            "ScheduledTime": fn (x) -> format_epoch_to_12_hour_AMPM(x) end,
+	    "Lateness": fn (x) ->
+		  {integer_lateness, _} = Integer.parse(x)
+		  formatted_lateness =
+		  cond do
+		      integer_lateness == 0 -> ""
+		      integer_lateness > 0 -> Integer.to_string(div(integer_lateness, 60)) <> " mins"
+		  end
+		  formatted_lateness
+	    end
+      }
+
+      train_map_list = make_map_list(headers, trains, format_functions)
+      Enum.group_by(train_map_list, fn x -> x.origin end)
+  end
+
   @doc """
        TrainDepartures.Utils.make_map_list
 

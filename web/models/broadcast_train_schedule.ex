@@ -1,7 +1,8 @@
 defmodule Traindepartures.BroadCastTrainSchedule do
     use GenServer
+    alias Traindepartures.Utils, as: Utils
 
-    @traintable_refresh_interval_mins 5
+    @train_table_refresh_interval_mins 5
 
     def start_link() do
     	GenServer.start_link(__MODULE__, [])
@@ -19,15 +20,13 @@ defmodule Traindepartures.BroadCastTrainSchedule do
     end
 
     defp do_work(state) do
-    	 IO.puts "do_work(state)"
-	 require HTTPotion
-	 #response = HTTPotion.get "http://developer.mbta.com/lib/gtrtfs/Departures.csv"
-	 response = HTTPotion.get "http://localhost:4000/departureinfoupdate"
-    	 Traindepartures.Endpoint.broadcast! "room:train_departures", "new_train_info", %{body: response.body}
+	 updated_train_info = Utils.getdeparturetabletemplateargs()
+	 updated_train_info_html = Phoenix.View.render_to_string(Traindepartures.PageView, Utils.train_table_template, updated_train_info)
+    	 Traindepartures.Endpoint.broadcast! "room:train_departures", "new_train_info", %{body: updated_train_info_html}
 	 {:noreply, state}
     end
 
     defp schedule_work do
-    	 Process.send_after(self(), :work, 1_000 * 60 * @traintable_refresh_interval_mins)
+    	 Process.send_after(self(), :work, 1_000 * 60 * @train_table_refresh_interval_mins)
     end
 end
