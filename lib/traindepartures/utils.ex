@@ -21,24 +21,27 @@ defmodule Traindepartures.Utils do
 
   def getdepartureinfo() do
       response = HTTPotion.get @csv_url
+      if response.status_code == 200 do
+	  [headers | trains] = CSVLixir.parse(response.body)
+	  # ScheduledTime is given as seconds since epoch (1970.01.01). Make it pretty
+	  format_functions = %{
+		"ScheduledTime": fn (x) -> format_epoch_to_12_hour_AMPM(x) end,
+		"Lateness": fn (x) ->
+		      {integer_lateness, _} = Integer.parse(x)
+		      formatted_lateness =
+		      cond do
+			  integer_lateness == 0 -> ""
+			  integer_lateness > 0 -> Integer.to_string(div(integer_lateness, 60)) <> " mins"
+		      end
+		      formatted_lateness
+		end
+	  }
 
-      [headers | trains] = CSVLixir.parse(response.body)
-      # ScheduledTime is given as seconds since epoch (1970.01.01). Make it pretty
-      format_functions = %{
-            "ScheduledTime": fn (x) -> format_epoch_to_12_hour_AMPM(x) end,
-	    "Lateness": fn (x) ->
-		  {integer_lateness, _} = Integer.parse(x)
-		  formatted_lateness =
-		  cond do
-		      integer_lateness == 0 -> ""
-		      integer_lateness > 0 -> Integer.to_string(div(integer_lateness, 60)) <> " mins"
-		  end
-		  formatted_lateness
-	    end
-      }
-
-      train_map_list = make_map_list(headers, trains, format_functions)
-      Enum.group_by(train_map_list, fn x -> x.origin end)
+	  train_map_list = make_map_list(headers, trains, format_functions)
+	  Enum.group_by(train_map_list, fn x -> x.origin end)
+      else
+	  %{}
+      end
   end
 
   @doc """
