@@ -54,7 +54,7 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
 socket.connect()
 
 // Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("room:train_departures", {})
+let channel = socket.channel("train_departures_schedule", {})
 var departuretable = require("web/static/js/traindepartures").DepartureTable
 
 channel.on("new_train_info", payload => {

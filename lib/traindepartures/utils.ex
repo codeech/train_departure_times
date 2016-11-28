@@ -13,13 +13,13 @@ defmodule Traindepartures.Utils do
   @train_table_template "traintable.html"
   def train_table_template, do: @train_table_template
 
-  def getdeparturetabletemplateargs() do
-      departureinfo = getdepartureinfo()
+  def get_departure_table_template_args() do
+      departureinfo = get_departure_info()
       stations = departureinfo |> Map.keys() |> Enum.sort()
       %{departureinfo: departureinfo, stations: stations}
   end
 
-  def getdepartureinfo() do
+  def get_departure_info() do
       response = HTTPotion.get @csv_url
       if response.status_code == 200 do
 	  [headers | trains] = CSVLixir.parse(response.body)
@@ -53,7 +53,7 @@ defmodule Traindepartures.Utils do
        keys from headers and values each list.
        Also takes a map of header_element => anonymous_function/1,
        used to format each value that corresponds to header_element.
-       
+
 
        E.g.
        Input:
@@ -103,7 +103,7 @@ defmodule Traindepartures.Utils do
   @doc """
       Traindepartures.Utils.format_epoch_to_12_hour_AMPM
       Convert at date given in seconds since 1970.01.01 to its 12 hour AM/PM
-      representation. 
+      representation.
 
       timezone_string is a Timex recognized timezome
       - see https://hexdocs.pm/timex/getting-started.html

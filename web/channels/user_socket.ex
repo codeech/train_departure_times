@@ -2,7 +2,7 @@ defmodule Traindepartures.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "room:*", Traindepartures.RoomChannel
+  channel "train_departures_schedule", Traindepartures.Schedule
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
